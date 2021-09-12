@@ -92,6 +92,11 @@ class SQLite
 		this.db = create_or_open_db(path, schema);
 	}
 
+	has(sql, params)
+	{
+		return this.db.prepare(sql).all(params).length != 0;
+	}
+
 	read(sql, params)
 	{
 		if (typeof params == "undefined")
