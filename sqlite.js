@@ -117,8 +117,25 @@ class SQLite
 	commit_transaction()
 	{
 		this.db.prepare("COMMIT;").run();
+		this.transaction_index = undefined;
 	}
-	
+
+	fast_write(sql, params, flush_limit)
+	{
+		if(typeof flush_limit == "undefined")
+			flush_limit = 100;
+
+		if(typeof this.transaction_index == "undefined")
+		{
+			this.transaction_index = 0;
+			this.begin_transaction();
+		}
+
+		this.write(sql, params)
+		this.transaction_index++;
+		if (this.transaction_index == flush_limit) 
+			this.commit_transaction();
+	}
 }
 
 module.exports = SQLite;
