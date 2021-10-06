@@ -111,13 +111,26 @@ class SQLite
 
 	begin_transaction()
 	{
+		if(typeof this.transaction_index != "undefined")
+			return;
+
 		this.db.prepare("BEGIN TRANSACTION;").run();
+		this.transaction_index = 0;
+	}
+
+	commit()
+	{
+		if(typeof this.transaction_index == "undefined")
+			return;
+
+		this.db.prepare("COMMIT;").run();
+		this.transaction_index = undefined;
 	}
 
 	commit_transaction()
 	{
-		this.db.prepare("COMMIT;").run();
-		this.transaction_index = undefined;
+		console.log("commit_transaction is deprecated, use commit() instead")
+		this.commit();
 	}
 
 	fast_write(sql, params, flush_limit)
@@ -126,15 +139,12 @@ class SQLite
 			flush_limit = 100;
 
 		if(typeof this.transaction_index == "undefined")
-		{
-			this.transaction_index = 0;
 			this.begin_transaction();
-		}
 
 		this.write(sql, params)
 		this.transaction_index++;
 		if (this.transaction_index == flush_limit) 
-			this.commit_transaction();
+			this.commit();
 	}
 }
 
