@@ -133,6 +133,8 @@ class SQLite
 		this.commit();
 	}
 
+	// you should always call the .commit() once
+	// after your frequent .fast_write() calls ended  
 	fast_write(sql, params, flush_limit)
 	{
 		if(typeof flush_limit == "undefined")
