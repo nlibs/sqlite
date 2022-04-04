@@ -6,6 +6,8 @@ function generate_table_sql(schema, table, sqls)
 {
 	var cols = schema[table]["columns"];
 	var indices = schema[table]["index"];
+	var primary = schema[table]["primary"];
+	
 	if (typeof indices == "undefined")
 		indices = [];
 
@@ -20,6 +22,9 @@ function generate_table_sql(schema, table, sqls)
 		if (i != cols.length -1)
 			col_string += ", ";
 	}
+
+	if (typeof primary != "undefined")
+		col_string += ', PRIMARY KEY(`'+primary+'`)';
 
 	sqls.push(`CREATE TABLE "${table}" (${col_string})`)
 
